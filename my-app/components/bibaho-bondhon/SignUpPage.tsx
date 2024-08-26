@@ -9,7 +9,6 @@ import nidData from "../../data/nid.json";
 import CreateWalletPage from "./CreateWalletPage"; // Import the new component
 import Walletheader from "./Walletheader";
 import { Keypair } from "@solana/web3.js";
-import ScanAndInputPage from "./ScanAndInput";
 import router, { useRouter } from "next/router";
 import Link from "next/link";
 
