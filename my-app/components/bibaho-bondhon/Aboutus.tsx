@@ -8,7 +8,7 @@ import Image from "next/image";
 function Aboutus() {
   return (
     <LampContainer
-      // className="bg-slate-100 dark:bg-slate-900"
+      className="bg-slate-900 dark:bg-slate-900"
     >
       <motion.h1
         initial={{ opacity: 0.5, y: 0 }}

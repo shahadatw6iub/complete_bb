@@ -9,7 +9,7 @@ import Navbar from "./Navbar";
 import Image from "next/image";
 
 function HeroSection() {
-  return (<main className="w-full flex relative flex flex-col w-full items-center justify-center bg-slate-900 dark:bg-slate-900 text-slate-950 transition-bg">
+  return (<main className="relative flex flex-col w-full items-center justify-center bg-slate-900 dark:bg-slate-900 text-slate-950 transition-bg">
     <BackgroundBeams />
     <motion.div
       initial={{ opacity: 0.0, y: 40 }}
@@ -22,7 +22,7 @@ function HeroSection() {
       className="relative flex flex-col gap-6 items-center justify-center p-4 md:p-8 lg:p-16"
     >
       <div className="relative z-15 text-3xl sm:text-5xl md:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sans font-bold">
-        Nuptial-Link
+        Bibaho-Bondhon
       </div>
       <div className="relative z-15 text-xl sm:text-2xl md:text-4xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sans font-bold">
         The future of marriage registration

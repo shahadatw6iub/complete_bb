@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { MovingCard } from "../../types.d";
 import valuation from "../../data/valuation.json";
 import { InfiniteMovingCards } from "../ui/infinite-moving-cards";
 import { BackgroundBeams } from "../ui/background-beams";
@@ -8,7 +7,7 @@ import Link from "next/link";
 
 function Valuation() {
   return (
-    <div className="h-[40rem] rounded-md flex flex-col antialiased bg-white dark:bg-black dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
+    <div className="h-[40rem] rounded-md flex flex-col antialiased bg-slate-900 dark:bg-slate-900 dark:bg-grid-white/[0.05] items-center justify-center relative overflow-hidden">
       <div className="max-w-2xl mx-auto p-4 text-center relative z-10">
         <h2 className="relative z-10 text-lg md:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 font-sans font-bold">
           Voice of Success
