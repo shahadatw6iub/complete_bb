@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaSun, FaMoon } from "react-icons/fa";
-import { Toaster } from "react-hot-toast";
 
 function Footer() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -98,10 +97,7 @@ function Footer() {
           {isDarkMode ? <FaSun size={24} /> : <FaMoon size={24} />}
         </button>
       </div>
-      <p className="text-center text-xs pt-8">© Md Shahadat Hossain Shahal</p>
-      <Link href={"https://github.com/shahadatw6"}>
-        <p className="text-center text-xs pt-2">github</p>
-      </Link>
+
 
 
 

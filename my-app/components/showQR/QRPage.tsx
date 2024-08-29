@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import DefaultLayout from "./layouts/DefaultLayout";
 import { NextSeoProps } from "next-seo";
 import styles from "./styles/Home.module.css";
@@ -7,47 +7,44 @@ import { createQR, encodeURL } from "@solana/pay";
 import { LinkCardGrid } from "./LinkCard";
 import { NoticeMessage, DevnetNotice } from "./NoticeMessage";
 
-// define a static size for the qr code
 const QR_CODE_SIZE = 350;
 
 const seo: NextSeoProps = {
-  // comment for better diffs
-  // title: "Demo application",
   // title: "Mint cNFTs using Solana Pay",
 };
 
 export default function QRPage() {
-  // define a ref to populate the qr code in the ui
-  const solanaPayQrRef = useRef<HTMLDivElement>();
+  // Define refs to populate the QR codes in the UI
+  const brideQrRef = useRef<HTMLDivElement>(null);
+  const groomQrRef = useRef<HTMLDivElement>(null);
 
-  // generate the SolanaPay qr code on the client only (e.g. within useEffect)
   useEffect(() => {
-    // make the site root the mint url
     const { location } = window;
-    const apiUrl = `${location.protocol}//${location.host}/api/mint`;
 
-    // setApiUrl(apiUrl);
-    console.log("API url:", apiUrl);
-
-    // generate the SolanaPay QR code
-    const solanaPayQr = createQR(
-      // encode the url with the desired params
-      encodeURL({
-        link: new URL(apiUrl),
-      }),
-      // set the svg image size
+    // Generate QR code for the bride
+    const brideApiUrl = `${location.protocol}//${location.host}/api/mint/bride`;
+    const brideQr = createQR(
+      encodeURL({ link: new URL(brideApiUrl) }),
       QR_CODE_SIZE,
-      // background color
       "transparent",
-      // "#141414",
-      // foreground color
-      "white",
+      "white"
     );
+    if (brideQrRef.current) {
+      brideQrRef.current.innerHTML = "";
+      brideQr.append(brideQrRef.current);
+    }
 
-    // set the generated QR code on the QR ref element
-    if (solanaPayQrRef.current) {
-      solanaPayQrRef.current.innerHTML = "";
-      solanaPayQr.append(solanaPayQrRef.current);
+    // Generate QR code for the groom
+    const groomApiUrl = `${location.protocol}//${location.host}/api/mint/groom`;
+    const groomQr = createQR(
+      encodeURL({ link: new URL(groomApiUrl) }),
+      QR_CODE_SIZE,
+      "transparent",
+      "white"
+    );
+    if (groomQrRef.current) {
+      groomQrRef.current.innerHTML = "";
+      groomQr.append(groomQrRef.current);
     }
   }, []);
 
@@ -57,7 +54,7 @@ export default function QRPage() {
         <div className="mb-10 space-y-10">
           <p className={styles.tagline}>
             Scan with a Solana wallet
-            <br /> to mint a compressed NFT
+            <br /> to mint a compressed NFT for Bride and Groom
           </p>
         </div>
 
@@ -72,14 +69,27 @@ export default function QRPage() {
             </NoticeMessage>
           </DevnetNotice>
 
-          <div
-            ref={solanaPayQrRef as any}
-            className={`qrBox w-[${QR_CODE_SIZE}px] h-[${QR_CODE_SIZE}px]`}
-          ></div>
+          <div className="flex flex-col items-center space-y-8">
+            {/* QR Code for Bride */}
+            <div>
+              <p className="text-center text-white">Bride's QR Code</p>
+              <div
+                ref={brideQrRef}
+                className={`qrBox w-[${QR_CODE_SIZE}px] h-[${QR_CODE_SIZE}px]`}
+              ></div>
+            </div>
+
+            {/* QR Code for Groom */}
+            <div>
+              <p className="text-center text-white">Groom's QR Code</p>
+              <div
+                ref={groomQrRef}
+                className={`qrBox w-[${QR_CODE_SIZE}px] h-[${QR_CODE_SIZE}px]`}
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
-
-
     </DefaultLayout>
   );
 }

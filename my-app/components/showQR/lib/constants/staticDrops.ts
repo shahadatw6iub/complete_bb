@@ -1,7 +1,3 @@
-/**
- * Assorted static data for testing
- */
-
 import { Creator } from "@metaplex-foundation/mpl-bubblegum";
 
 export type StaticProjectType = {
@@ -42,7 +38,7 @@ export type StaticDropKey = {
     uri: string;
     symbol: string;
     sellerFeeBasisPoints?: number;
-    creators?: Option<Creator[]>;
+    creators?: Creator[] | undefined;
     isMutable: boolean;
   };
 };

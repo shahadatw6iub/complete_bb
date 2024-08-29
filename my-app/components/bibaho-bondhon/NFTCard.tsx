@@ -14,7 +14,7 @@ export default function NFTCard() {
           translateZ="60"
           className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
         >
-          We care about your data{" "}
+          Marriage no 1{" "}
         </CardItem>
         <CardItem translateZ="100" className="w-full mt-4">
           <Image
@@ -33,7 +33,8 @@ export default function NFTCard() {
             target="__blank"
             className="px-4 py-2 rounded-xl text-xs font-normal dark:text-white"
           >
-            Leave a review →
+            Bride: Mr. Bhuiyan<br />
+            Groom: Ms.Bhuiyan
           </CardItem>
           <CardItem
             translateZ={20}
