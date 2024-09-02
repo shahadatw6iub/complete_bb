@@ -13,7 +13,6 @@ function calculateAge(dob: string | number | Date) {
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
 
-    // Adjust age if the birth date has not yet occurred this year
     if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
         age--;
     }
@@ -28,7 +27,6 @@ export default function Page() {
 
     const [isEligible, setIsEligible] = useState<boolean | null>(null);
 
-    // Calculate ages
     const age1 = dob1 ? calculateAge(dob1) : '';
     const age2 = dob2 ? calculateAge(dob2) : '';
 
@@ -40,7 +38,8 @@ export default function Page() {
 
     const checkAgesWithSmartContract = async (brideAge: number, groomAge: number) => {
         try {
-            const connection = new Connection('https://api.mainnet-beta.solana.com', { commitment: 'confirmed' });
+            // Replace with your Alchemy RPC URL
+            const connection = new Connection('https://solana-devnet.g.alchemy.com/v2/fXOeARtK2TCJkv-lZ6n1OYbUCef-1F0O', { commitment: 'confirmed' });
             const provider = new AnchorProvider(connection, window.solana, 'confirmed');
             const program = new Program(idl, idl.metadata.address, provider);
 
@@ -56,9 +55,11 @@ export default function Page() {
                 .rpc();
 
             // Fetch the eligibility result from the smart contract
-            const eligibility = await program.methods.getEligibility().accounts({
-                dataAccount: dataAccount,
-            }).call();
+            const eligibility = await program.methods.getEligibility()
+                .accounts({
+                    dataAccount: dataAccount,
+                })
+                .view(); // Use 'view' method to call read functions
 
             setIsEligible(eligibility);
         } catch (error) {
