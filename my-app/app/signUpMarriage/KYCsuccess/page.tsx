@@ -1,18 +1,26 @@
 "use client";
 
+import { Program, AnchorProvider, web3 } from "@project-serum/anchor";
+import { AgeCheckProgram } from "../../../../program/target/types/AgeCheckProgram";
 import { useSearchParams } from 'next/navigation';
 import { SignMessage } from '../../../components/sol_comp/SignMessage';
-import { useEffect, useState } from 'react';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { AnchorProvider, Program } from '@project-serum/anchor';
-import idl from '../../../../program/target/idl/AgeCheckProgram.json'; // Adjust the path to your IDL file
+import { useState, useEffect } from 'react';
+import {
+    connection,
+    commitmentLevel,
+    ageprogramId,
+    ageprogramInterface,
+} from "../../../utils/constants";
+import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
 
-function calculateAge(dob: string | number | Date) {
+// Function to calculate age from DOB
+function calculateAge(dob: string) {
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
 
+    // Adjust if birthday hasn't occurred this year yet
     if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
         age--;
     }
@@ -22,56 +30,61 @@ function calculateAge(dob: string | number | Date) {
 
 export default function Page() {
     const searchParams = useSearchParams();
-    const dob1 = searchParams?.get('var1') || '';
-    const dob2 = searchParams?.get('var2') || '';
-
+    const dob1 = searchParams?.get('var1') || ''; // Bride's DOB
+    const dob2 = searchParams?.get('var2') || ''; // Groom's DOB
     const [isEligible, setIsEligible] = useState<boolean | null>(null);
+    const wallet = useAnchorWallet();
 
-    const age1 = dob1 ? calculateAge(dob1) : '';
-    const age2 = dob2 ? calculateAge(dob2) : '';
+    // Calculate ages
+    const age1 = dob1 ? calculateAge(dob1) : null;
+    const age2 = dob2 ? calculateAge(dob2) : null;
 
     useEffect(() => {
-        if (age1 && age2) {
-            checkAgesWithSmartContract(age1, age2);
+        if (age1 !== null && age2 !== null && wallet) {
+            checkAge(age1, age2, wallet);
         }
-    }, [age1, age2]);
+    }, [age1, age2, wallet]);
 
-    const checkAgesWithSmartContract = async (brideAge: number, groomAge: number) => {
+    async function checkAge(brideAge: number, groomAge: number, wallet: AnchorWallet) {
+        const provider = new AnchorProvider(connection, wallet, {
+            preflightCommitment: commitmentLevel,
+        });
+
+        const program = new Program(
+            ageprogramInterface,
+            ageprogramId,
+            provider
+        ) as Program<AgeCheckProgram>;
+
         try {
-            // Replace with your Alchemy RPC URL
-            const connection = new Connection('https://solana-devnet.g.alchemy.com/v2/fXOeARtK2TCJkv-lZ6n1OYbUCef-1F0O', { commitment: 'confirmed' });
-            const provider = new AnchorProvider(connection, window.solana, 'confirmed');
-            const program = new Program(idl, idl.metadata.address, provider);
+            // Check ages using the smart contract
+            await program.rpc.checkAges(brideAge, groomAge, {
+                accounts: {
+                    dataAccount: new web3.PublicKey("your-data-account-public-key-here")
+                }
+            });
 
-            // Replace 'YOUR_DATA_ACCOUNT_PUBLIC_KEY' with the actual public key of your data account
-            const dataAccount = new PublicKey('HAbMEtR1mgqAqNnTAzZGEdkgjKFXUufasKCN8JoEnyDV');
+            // Fetch eligibility result from the contract
+            const eligibilityResponse: any = await program.rpc.getEligibility({
+                accounts: {
+                    dataAccount: new web3.PublicKey("your-data-account-public-key-here")
+                }
+            });
 
-            // Call the checkAges method on the smart contract
-            await program.methods
-                .checkAges(brideAge, groomAge)
-                .accounts({
-                    dataAccount: dataAccount,
-                })
-                .rpc();
-
-            // Fetch the eligibility result from the smart contract
-            const eligibility = await program.methods.getEligibility()
-                .accounts({
-                    dataAccount: dataAccount,
-                })
-                .view(); // Use 'view' method to call read functions
+            // Convert the response to a boolean if it's a string
+            const eligibility: boolean = eligibilityResponse === 'true' || eligibilityResponse === true;
 
             setIsEligible(eligibility);
         } catch (error) {
-            console.error('Error checking ages with smart contract:', error);
+            console.error("Error checking eligibility:", error);
             setIsEligible(false);
         }
-    };
+    }
 
     return (
         <div>
-            <p>Age 1: {age1}</p>
-            <p>Age 2: {age2}</p>
+            <p>Age 1 (Bride): {age1}</p>
+            <p>Age 2 (Groom): {age2}</p>
             {isEligible !== null && (
                 <p>Eligibility: {isEligible ? 'Eligible' : 'Not Eligible'}</p>
             )}

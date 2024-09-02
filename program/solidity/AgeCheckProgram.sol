@@ -20,8 +20,4 @@ contract AgeCheckProgram {
     function getEligibility() public view returns (bool) {
         return isEligible;
     }
-
-    function getBrideAndGroom() public view returns (address, address) {
-        return (bride, groom);
-    }
 }
