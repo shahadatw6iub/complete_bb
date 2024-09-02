@@ -19,6 +19,8 @@ function SignUpPage() {
   const [groomFingerprintScanned, setGroomFingerprintScanned] = useState(false);
   const [kycVerified, setKycVerified] = useState(false);
   const [kycMessage, setKycMessage] = useState("");
+  const [brideDob, setBrideDob] = useState<string | null>(null);
+  const [groomDob, setGroomDob] = useState<string | null>(null);
 
   const [showCreateWallet, setShowCreateWallet] = useState(false); // State to toggle component
   const [wallets, setWallets] = useState<{
@@ -45,11 +47,27 @@ function SignUpPage() {
       setKycVerified(false);
       setKycMessage("KYC Verification Failed.");
     }
+    // Find the entries for bride and groom based on their NIDs
+    const foundBrideEntry = nidData.find((entry) => entry.nid === brideNid);
+    const foundGroomEntry = nidData.find((entry) => entry.nid === groomNid);
+
+    // Check if both entries were found
+    if (!foundBrideEntry || !foundGroomEntry) {
+      // Handle cases where either NID was not found
+      console.error('NID not found for bride or groom');
+      return;
+    }
+
+    // Extract the date of birth from the found entries
+    const foundBrideDob = foundBrideEntry.date_of_birth;
+    const foundGroomDob = foundGroomEntry.date_of_birth;
+
+    // Set the DOBs in state
+    setBrideDob(foundBrideDob);
+    setGroomDob(foundGroomDob);
   };
 
-  const handleScanClick = () => {
-    router.push("/scanAndInput"); // Replace with your component's path
-  };
+
 
   const handleCreateWallet = () => {
     setShowCreateWallet(true); // Show the new component when the button is clicked
@@ -181,11 +199,12 @@ function SignUpPage() {
           )}
           {kycVerified && (
             <Link
-              href="/showQR"
+              href={`/signUpMarriage/KYCsuccess?var1=${encodeURIComponent(brideDob)}&var2=${encodeURIComponent(groomDob)}`}
               className="mt-6 pd-5 py-2 px-12 border border-neutral-800 bg-gradient-to-br relative group/btn from-black dark:from-zinc dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-auto text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
             >
               Make contract <BottomGradient />
             </Link>
+
           )}
         </AuroraBackground>
       </div>
