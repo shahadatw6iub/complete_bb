@@ -12,7 +12,7 @@ import {
     ageprogramInterface,
 } from "../../../utils/constants";
 import { AnchorWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
-
+import { Keypair } from "@solana/web3.js";
 // Function to calculate age from DOB
 function calculateAge(dob: string) {
     const birthDate = new Date(dob);
@@ -49,6 +49,7 @@ export default function Page() {
         const provider = new AnchorProvider(connection, wallet, {
             preflightCommitment: commitmentLevel,
         });
+        const dataAccount = Keypair.generate();
 
         const program = new Program(
             ageprogramInterface,
@@ -60,14 +61,14 @@ export default function Page() {
             // Check ages using the smart contract
             await program.rpc.checkAges(brideAge, groomAge, {
                 accounts: {
-                    dataAccount: new web3.PublicKey("your-data-account-public-key-here")
+                    dataAccount: dataAccount.publicKey,
                 }
             });
 
             // Fetch eligibility result from the contract
             const eligibilityResponse: any = await program.rpc.getEligibility({
                 accounts: {
-                    dataAccount: new web3.PublicKey("your-data-account-public-key-here")
+                    dataAccount: dataAccount.publicKey,
                 }
             });
 
